@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Receipts" />
+  <title>Receipt Logger</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #111;
+      color: #f0f0f0;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 32px;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .btn {
+      background: #1e1e1e;
+      border: 1.5px solid #2e2e2e;
+      border-radius: 16px;
+      padding: 28px 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #f0f0f0;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active { background: #2a2a2a; border-color: #555; }
+
+    .btn .icon { font-size: 2rem; }
+
+    .btn.custom {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      padding: 20px 20px;
+      gap: 14px;
+    }
+
+    .custom-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      color: #f0f0f0;
+      font-family: inherit;
+    }
+
+    .custom-input::placeholder { color: #555; }
+
+    .custom-go {
+      background: #2e2e2e;
+      border: none;
+      border-radius: 10px;
+      color: #aaa;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Confirmation overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .overlay.show { display: flex; }
+
+    .overlay .check { font-size: 3.5rem; }
+
+    .overlay .label {
+      font-size: 1.1rem;
+      color: #bbb;
+      text-align: center;
+    }
+
+    .overlay .sublabel {
+      font-size: 0.85rem;
+      color: #555;
+      text-align: center;
+      margin-top: -8px;
+    }
+
+    .overlay .dismiss {
+      margin-top: 16px;
+      background: #1e1e1e;
+      border: 1.5px solid #333;
+      border-radius: 12px;
+      color: #aaa;
+      font-size: 0.9rem;
+      padding: 12px 32px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Log Receipt</h1>
+
+  <div class="grid">
+    <button class="btn" onclick="fire('Groceries')">
+      <span class="icon">🛒</span>
+      Groceries
+    </button>
+    <button class="btn" onclick="fire('Fuel')">
+      <span class="icon">⛽</span>
+      Fuel
+    </button>
+    <button class="btn" onclick="fire('Bills')">
+      <span class="icon">📄</span>
+      Bills
+    </button>
+    <button class="btn" onclick="fire('Misc')">
+      <span class="icon">📦</span>
+      Misc
+    </button>
+
+    <div class="btn custom">
+      <span class="icon">✏️</span>
+      <input class="custom-input" id="customInput" type="text" placeholder="Custom category…" autocorrect="off" />
+      <button class="custom-go" onclick="fireCustom()">Go</button>
+    </div>
+  </div>
+
+  <!-- Confirmation -->
+  <div class="overlay" id="overlay">
+    <div class="check">✓</div>
+    <div class="label" id="overlayLabel">Opening Shortcut…</div>
+    <div class="sublabel">Shortcut will grab your latest photo and save it.</div>
+    <button class="dismiss" onclick="dismiss()">Done</button>
+  </div>
+
+  <script>
+    function fire(category) {
+      const name = encodeURIComponent('Receipt - ' + category);
+      showOverlay(category);
+      setTimeout(() => {
+        window.location.href = 'shortcuts://run-shortcut?name=' + name;
+      }, 300);
+    }
+
+    function fireCustom() {
+      const val = document.getElementById('customInput').value.trim();
+      if (!val) return;
+      fire(val);
+      document.getElementById('customInput').value = '';
+    }
+
+    function showOverlay(category) {
+      document.getElementById('overlayLabel').textContent = category + ' receipt logged';
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function dismiss() {
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    // Allow Enter key in custom input
+    document.getElementById('customInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fireCustom();
+    });
+  </script>
+
+</body>
+</html>
