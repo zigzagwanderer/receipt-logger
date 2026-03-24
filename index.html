@@ -1,152 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Receipts" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Receipts">
   <title>Receipt Logger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1e1e1e;
+      --border: #282828;
+      --border-active: #404040;
+      --text: #f0f0f0;
+      --text-dim: #666;
+      --text-muted: #3a3a3a;
+      --accent: #b5f23a;
+      --accent-dim: #1a2200;
+      --accent-text: #0a0a0a;
+      --danger: #ff4444;
+      --danger-dim: #2a0000;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #111;
-      color: #f0f0f0;
-      min-height: 100dvh;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      max-width: 430px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 48px 24px 32px;
+      padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 20px);
+      overflow-x: hidden;
     }
 
-    h1 {
-      font-size: 1.1rem;
+    /* ── HEADER ── */
+    .header {
+      padding: 20px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left h1 {
+      font-size: 26px;
       font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 40px;
+      letter-spacing: -0.5px;
+      color: var(--text);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      width: 100%;
-      max-width: 340px;
+    .header-left p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      font-family: 'DM Mono', monospace;
     }
 
-    .btn {
-      background: #1e1e1e;
-      border: 1.5px solid #2e2e2e;
-      border-radius: 16px;
-      padding: 28px 16px;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #f0f0f0;
-      cursor: pointer;
+    .header-actions {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      transition: background 0.15s, border-color 0.15s;
-      -webkit-tap-highlight-color: transparent;
+      gap: 8px;
     }
 
-    .btn:active { background: #2a2a2a; border-color: #555; }
-
-    .btn .icon { font-size: 2rem; }
-
-    .btn.custom {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      padding: 20px 20px;
-      gap: 14px;
-    }
-
-    .custom-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      color: #f0f0f0;
-      font-family: inherit;
-    }
-
-    .custom-input::placeholder { color: #555; }
-
-    .custom-go {
-      background: #2e2e2e;
-      border: none;
-      border-radius: 10px;
-      color: #aaa;
-      font-size: 0.85rem;
-      padding: 6px 14px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .btn.saved {
-      position: relative;
-    }
-
-    .btn-delete {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #333;
-      border: none;
+    .icon-btn {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      color: #888;
-      font-size: 0.7rem;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
-      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .icon-btn:active { background: var(--surface2); }
+    .icon-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
     }
 
-    .btn-delete:active { background: #555; color: #fff; }
+    /* ── QUICK LOG ── */
+    .quick-log {
+      margin: 16px 20px 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .quick-log:active { background: var(--surface2); }
+    .quick-log.hidden { display: none; }
 
-    /* Preview overlay */
+    .quick-log-icon {
+      font-size: 26px;
+      width: 44px;
+      height: 44px;
+      background: var(--accent-dim);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .quick-log-text { flex: 1; }
+    .quick-log-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .quick-log-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 1px;
+    }
+
+    .quick-log-arrow {
+      font-size: 20px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 10px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .add-cat-btn {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 4px 0;
+      user-select: none;
+    }
+
+    /* ── CATEGORY LIST ── */
+    .cat-list {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cat-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.25s ease both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cat-item:active { background: var(--surface2); }
+
+    .cat-item.edit-mode {
+      cursor: default;
+      border-color: var(--border-active);
+    }
+
+    .cat-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .cat-item:not(.edit-mode):active .cat-icon-wrap {
+      background: var(--accent-dim);
+    }
+
+    .cat-info { flex: 1; min-width: 0; }
+    .cat-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .cat-meta {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .cat-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .log-btn {
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+      user-select: none;
+    }
+    .log-btn:active { opacity: 0.75; }
+
+    .delete-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--danger-dim);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .delete-btn:active { background: #4a0000; }
+
+    .cat-item:not(.edit-mode) .delete-btn { display: none; }
+    .cat-item.edit-mode .log-btn { display: none; }
+
+    /* ── ADD CATEGORY MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+      width: 100%;
+      transform: translateY(40px);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .modal-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      outline: none;
+      -webkit-appearance: none;
+      margin-bottom: 16px;
+    }
+    .modal-input::placeholder { color: var(--text-dim); }
+    .modal-input:focus { border-color: var(--accent); }
+
+    .icon-picker-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .icon-option {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1.5px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s;
+      user-select: none;
+    }
+    .icon-option:active { background: var(--border); }
+    .icon-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .modal-confirm {
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .modal-confirm:active { opacity: 0.8; }
+    .modal-confirm:disabled {
+      background: var(--surface2);
+      color: var(--text-dim);
+    }
+
+    .modal-cancel {
+      width: 100%;
+      background: transparent;
+      color: var(--text-dim);
+      border: none;
+      padding: 14px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* ── PHOTO PREVIEW OVERLAY ── */
     .preview-overlay {
-      display: none;
       position: fixed;
       inset: 0;
       background: #000;
+      z-index: 200;
+      display: flex;
       flex-direction: column;
-      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
     }
-
-    .preview-overlay.show { display: flex; }
+    .preview-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
 
     .preview-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 52px 24px 16px;
+      padding: calc(env(safe-area-inset-top, 20px) + 16px) 24px 16px;
       flex-shrink: 0;
     }
 
     .preview-category {
-      font-size: 1rem;
+      font-size: 16px;
       font-weight: 600;
-      color: #f0f0f0;
+      color: var(--text);
     }
 
-    .preview-cancel {
+    .preview-cancel-btn {
       background: none;
       border: none;
-      color: #666;
-      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-size: 15px;
       cursor: pointer;
-      font-family: inherit;
+      font-family: 'DM Sans', sans-serif;
       padding: 4px 0;
     }
 
@@ -167,251 +459,704 @@
     }
 
     .preview-actions {
-      padding: 24px 24px 48px;
+      padding: 20px 24px calc(env(safe-area-inset-bottom, 20px) + 20px);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       flex-shrink: 0;
     }
 
-    .btn-log {
-      background: #b5f23a;
+    .btn-log-it {
+      background: var(--accent);
       border: none;
       border-radius: 14px;
-      color: #0a0a0a;
-      font-size: 1.05rem;
+      color: var(--accent-text);
+      font-size: 17px;
       font-weight: 700;
       padding: 18px;
       cursor: pointer;
-      font-family: inherit;
-      -webkit-tap-highlight-color: transparent;
+      font-family: 'DM Sans', sans-serif;
     }
-
-    .btn-log:active { background: #9fd930; }
+    .btn-log-it:active { opacity: 0.85; }
 
     .btn-retake {
-      background: #1e1e1e;
-      border: 1.5px solid #2e2e2e;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 14px;
-      color: #aaa;
-      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-size: 15px;
       font-weight: 500;
       padding: 16px;
       cursor: pointer;
-      font-family: inherit;
-      -webkit-tap-highlight-color: transparent;
+      font-family: 'DM Sans', sans-serif;
     }
+    .btn-retake:active { background: var(--surface2); }
 
-    .btn-retake:active { background: #2a2a2a; }
-
-    /* Success overlay */
-    .success-overlay {
-      display: none;
+    /* ── SETUP GUIDE ── */
+    .guide-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: var(--bg);
+      z-index: 300;
+      overflow-y: auto;
+      padding: 0 0 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .guide-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .guide-header {
+      padding: 20px 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .guide-close {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+
+    .guide-title {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      padding: 24px 20px 8px;
+    }
+
+    .guide-subtitle {
+      font-size: 14px;
+      color: var(--text-dim);
+      padding: 0 20px 28px;
+      line-height: 1.5;
+    }
+
+    .guide-steps {
+      padding: 0 20px;
+      display: flex;
       flex-direction: column;
+      gap: 14px;
+    }
+
+    .guide-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      animation: slideIn 0.3s ease both;
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      z-index: 200;
+      flex-shrink: 0;
+      font-family: 'DM Mono', monospace;
     }
 
-    .success-overlay.show { display: flex; }
+    .step-content { flex: 1; }
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
 
-    .success-overlay .check { font-size: 3.5rem; }
+    .step-code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      color: var(--accent);
+      word-break: break-all;
+    }
 
-    .success-overlay .label {
-      font-size: 1.1rem;
-      color: #bbb;
+    .guide-note {
+      margin: 20px 20px 0;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .guide-note strong { color: var(--accent); }
+
+    .cat-name-list {
+      padding: 10px 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cat-shortcut-row {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: 'DM Mono', monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cat-shortcut-name { color: var(--accent); }
+    .cat-shortcut-label { color: var(--text-dim); font-size: 11px; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
       text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      z-index: 400;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+      opacity: 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-color: var(--accent); color: var(--accent); }
+    .toast.error { border-color: var(--danger); color: var(--danger); }
+
+    /* ── SCROLLABLE CONTENT ── */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 20px;
     }
 
-    .success-overlay .sublabel {
-      font-size: 0.85rem;
-      color: #555;
-      text-align: center;
-      margin-top: -8px;
-    }
-
-    .success-overlay .dismiss {
-      margin-top: 16px;
-      background: #1e1e1e;
-      border: 1.5px solid #333;
-      border-radius: 12px;
-      color: #aaa;
-      font-size: 0.9rem;
-      padding: 12px 32px;
-      cursor: pointer;
-      font-family: inherit;
-    }
+    #fileInput { display: none; }
   </style>
 </head>
 <body>
 
-  <h1>Log Receipt</h1>
+  <!-- MAIN APP -->
 
-  <div class="grid">
-    <button class="btn" onclick="openCamera('Groceries', '🛒')">
-      <span class="icon">🛒</span>
-      Groceries
-    </button>
-    <button class="btn" onclick="openCamera('Fuel', '⛽')">
-      <span class="icon">⛽</span>
-      Fuel
-    </button>
-    <button class="btn" onclick="openCamera('Bills', '📄')">
-      <span class="icon">📄</span>
-      Bills
-    </button>
-    <button class="btn" onclick="openCamera('Misc', '📦')">
-      <span class="icon">📦</span>
-      Misc
-    </button>
-
-    <div id="savedCategories"></div>
-
-    <div class="btn custom">
-      <span class="icon">✏️</span>
-      <input class="custom-input" id="customInput" type="text" placeholder="New category…" autocorrect="off" autocapitalize="words" />
-      <button class="custom-go" onclick="saveCategory()">Add</button>
+  <div class="header">
+    <div class="header-left">
+      <h1>Receipts</h1>
+      <p id="dateLabel"></p>
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" id="guideBtn" onclick="openGuide()" title="Setup Guide">📋</div>
+      <div class="icon-btn" id="editBtn" onclick="toggleEdit()" title="Edit categories">✏️</div>
     </div>
   </div>
 
-  <!-- Hidden file input -->
-  <input type="file" id="cameraInput" accept="image/*" style="display:none" />
+  <div class="scroll-content">
 
-  <!-- Preview -->
+    <!-- QUICK LOG -->
+    <div class="quick-log hidden" id="quickLog" onclick="quickLog()">
+      <div class="quick-log-icon" id="quickLogIcon">🛒</div>
+      <div class="quick-log-text">
+        <div class="quick-log-label">Quick Log</div>
+        <div class="quick-log-name" id="quickLogName">Groceries</div>
+      </div>
+      <div class="quick-log-arrow">→</div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="section-header">
+      <div class="section-label">Categories</div>
+      <div class="add-cat-btn" onclick="openAddModal()">+ New</div>
+    </div>
+
+    <div class="cat-list" id="catList"></div>
+
+  </div>
+
+  <!-- ADD CATEGORY MODAL -->
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-title">New Category</div>
+      <div class="modal-label">Name</div>
+      <input class="modal-input" id="newCatName" type="text" placeholder="e.g. Travel, Coffee, Parking…"
+        autocorrect="off" autocapitalize="words" oninput="onNameInput()">
+      <div class="icon-picker-label">Icon</div>
+      <div class="icon-grid" id="iconGrid"></div>
+      <button class="modal-confirm" id="modalConfirm" onclick="confirmAdd()" disabled>Add Category</button>
+      <button class="modal-cancel" onclick="closeAddModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- PHOTO PREVIEW -->
+
   <div class="preview-overlay" id="previewOverlay">
     <div class="preview-header">
       <span class="preview-category" id="previewCategory"></span>
-      <button class="preview-cancel" onclick="cancelPreview()">Cancel</button>
+      <button class="preview-cancel-btn" onclick="cancelPreview()">Cancel</button>
     </div>
     <div class="preview-img-wrap">
       <img id="previewImg" src="" alt="Receipt preview" />
     </div>
     <div class="preview-actions">
-      <button class="btn-log" onclick="confirmLog()">Log It</button>
+      <button class="btn-log-it" onclick="confirmLog()">Log It</button>
       <button class="btn-retake" onclick="retake()">Retake</button>
     </div>
   </div>
 
-  <!-- Success -->
-  <div class="success-overlay" id="successOverlay">
-    <div class="check">✓</div>
-    <div class="label" id="successLabel">Receipt logged</div>
-    <div class="sublabel">Shortcut is saving to your vault.</div>
-    <button class="dismiss" onclick="dismissSuccess()">Done</button>
+  <!-- SETUP GUIDE -->
+
+  <div class="guide-overlay" id="guideOverlay">
+    <div class="guide-header">
+      <div style="font-size:18px; font-weight:600;">Setup Guide</div>
+      <div class="guide-close" onclick="closeGuide()">Done</div>
+    </div>
+    <div class="guide-title">Connect to Shortcuts</div>
+    <div class="guide-subtitle">iOS Shortcuts automate saving your receipt photos directly into your Obsidian vault. Follow these steps once per category.</div>
+
+    <div class="guide-steps">
+
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Open the Shortcuts app</div>
+          <div class="step-desc">Find the Shortcuts app on your iPhone (it's built-in). Tap the <strong>+</strong> button to create a new shortcut.</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Add a "Receive Input" action</div>
+          <div class="step-desc">Search for <em>Receive Input</em> and add it. Set the input type to <strong>Images</strong>. This lets the shortcut receive the photo from this app.</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Save the photo to your Obsidian vault</div>
+          <div class="step-desc">Add a <strong>Save File</strong> action. Tap the path field and navigate to your Obsidian vault folder in Files:
+          </div>
+          <div class="step-code">On My iPhone → Obsidian → [Your Vault] → 03 AREAS → Finance → Receipts → [Category]</div>
+          <div class="step-desc" style="margin-top:8px;">The app passes the filename automatically — just make sure "Ask Where to Save" is turned off.</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Name your Shortcut exactly</div>
+          <div class="step-desc">The shortcut name must match exactly what this app sends. Create one shortcut per category using these names:</div>
+          <div id="shortcutNameList"></div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Turn on "Allow Running Without Asking"</div>
+          <div class="step-desc">In the shortcut settings (tap the ⋯ menu), enable <strong>Allow Running Without Asking</strong> so it runs instantly when triggered from this app.</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Test it!</div>
+          <div class="step-desc">Tap a category, take a photo, confirm the preview, and tap <strong>Log It</strong>. The shortcut will fire and save the photo to your vault folder.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="guide-note">
+      <strong>Note:</strong> iOS does not allow apps to create Shortcuts automatically. You only need to do this setup once per category — after that, logging is just a few taps.
+    </div>
   </div>
 
-  <script>
-    let pendingCategory = null;
-    let pendingFilename = null;
-    let pendingObjectURL = null;
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-    function openCamera(category) {
-      pendingCategory = category;
-      const input = document.getElementById('cameraInput');
-      input.value = '';
-      input.onchange = onPhotoSelected;
-      input.click();
+  <!-- FILE INPUT -->
+  <input type="file" id="fileInput" accept="image/*" onchange="onPhotoChosen(event)">
+
+  <script>
+    // ── DATA ──
+    const STORAGE_KEY = 'receipt_cats_v2';
+    const LAST_KEY = 'receipt_last_cat';
+
+    const DEFAULT_CATS = [
+      { id: 'groceries', name: 'Groceries', icon: '🛒', builtin: true },
+      { id: 'fuel',      name: 'Fuel',      icon: '⛽', builtin: true },
+      { id: 'bills',     name: 'Bills',     icon: '📄', builtin: true },
+      { id: 'misc',      name: 'Misc',      icon: '📦', builtin: true },
+    ];
+
+    const ICON_OPTIONS = [
+      '🛒','⛽','📄','📦','🍽️','☕','🚗','✈️','🏨','💊','🎬','🛍️',
+      '🏋️','📱','🔧','🏠','🌿','🐾','🎓','💼','🎁','🧾','🚌','⚡',
+      '🍕','🥗','🍺','🧴','👕','💻','🎮','🏥'
+    ];
+
+    const KEYWORD_ICONS = {
+      food: '🍽️', restaurant: '🍽️', eat: '🍽️', lunch: '🍽️', dinner: '🍽️', breakfast: '🍽️',
+      coffee: '☕', cafe: '☕', drink: '☕',
+      fuel: '⛽', gas: '⛽', petrol: '⛽',
+      grocery: '🛒', groceries: '🛒', supermarket: '🛒', shop: '🛍️', shopping: '🛍️',
+      car: '🚗', auto: '🚗', vehicle: '🚗', parking: '🚗',
+      travel: '✈️', flight: '✈️', airline: '✈️',
+      hotel: '🏨', accommodation: '🏨',
+      medical: '💊', pharmacy: '💊', health: '💊', doctor: '🏥',
+      movie: '🎬', cinema: '🎬', entertainment: '🎬', game: '🎮',
+      phone: '📱', mobile: '📱',
+      electric: '⚡', electricity: '⚡', utility: '⚡', bill: '📄', bills: '📄',
+      gift: '🎁', present: '🎁',
+      home: '🏠', house: '🏠', rent: '🏠',
+      gym: '🏋️', fitness: '🏋️', sport: '🏋️',
+      tech: '💻', laptop: '💻', computer: '💻',
+      book: '🎓', school: '🎓', education: '🎓', course: '🎓',
+      work: '💼', business: '💼', office: '💼',
+      pet: '🐾', animal: '🐾', vet: '🐾',
+      garden: '🌿', plant: '🌿',
+      clothes: '👕', clothing: '👕', fashion: '👕',
+      transport: '🚌', bus: '🚌', train: '🚌', transit: '🚌',
+      pizza: '🍕', beer: '🍺', salad: '🥗',
+      repair: '🔧', maintenance: '🔧', fix: '🔧',
+    };
+
+    function suggestIcon(name) {
+      const lower = name.toLowerCase();
+      for (const [key, icon] of Object.entries(KEYWORD_ICONS)) {
+        if (lower.includes(key)) return icon;
+      }
+      return '🏷️';
     }
 
-    function onPhotoSelected(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+    function getCats() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return saved && saved.length ? saved : [...DEFAULT_CATS];
+      } catch { return [...DEFAULT_CATS]; }
+    }
+
+    function saveCats(cats) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cats));
+    }
+
+    function getLastCat() {
+      try { return JSON.parse(localStorage.getItem(LAST_KEY)); }
+      catch { return null; }
+    }
+
+    function setLastCat(cat) {
+      localStorage.setItem(LAST_KEY, JSON.stringify(cat));
+    }
+
+    // ── STATE ──
+    let cats = getCats();
+    let editMode = false;
+    let pendingCat = null;
+    let pendingFilename = null;
+    let pendingObjectURL = null;
+    let selectedIcon = null;
+
+    // ── INIT ──
+    function init() {
+      const now = new Date();
+      document.getElementById('dateLabel').textContent =
+        now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }).toUpperCase();
+      renderQuickLog();
+      renderCats();
+      buildIconGrid();
+    }
+
+    // ── QUICK LOG ──
+    function renderQuickLog() {
+      const last = getLastCat();
+      const el = document.getElementById('quickLog');
+      if (!last) { el.classList.add('hidden'); return; }
+      const cat = cats.find(c => c.id === last.id);
+      if (!cat) { el.classList.add('hidden'); return; }
+      el.classList.remove('hidden');
+      document.getElementById('quickLogIcon').textContent = cat.icon;
+      document.getElementById('quickLogName').textContent = cat.name;
+    }
+
+    function quickLog() {
+      const last = getLastCat();
+      if (!last) return;
+      const cat = cats.find(c => c.id === last.id);
+      if (!cat) return;
+      triggerPhoto(cat);
+    }
+
+    // ── RENDER CATS ──
+    function renderCats() {
+      const list = document.getElementById('catList');
+      list.innerHTML = '';
+
+      if (!cats.length) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div>No categories yet. Tap <strong>+ New</strong> to add one.</div>`;
+        return;
+      }
+
+      cats.forEach((cat, i) => {
+        const item = document.createElement('div');
+        item.className = 'cat-item' + (editMode ? ' edit-mode' : '');
+        item.style.animationDelay = `${i * 0.04}s`;
+        item.innerHTML = `
+          <div class="cat-icon-wrap">${cat.icon}</div>
+          <div class="cat-info">
+            <div class="cat-name">${cap(cat.name)}</div>
+            <div class="cat-meta">Receipt - ${cap(cat.name)}</div>
+          </div>
+          <div class="cat-action">
+            <button class="log-btn" onclick="triggerPhoto(cats[${i}])">Log Receipt</button>
+            <div class="delete-btn" onclick="deleteCat('${cat.id}')">✕</div>
+          </div>
+        `;
+        if (!editMode) {
+          item.onclick = (e) => {
+            if (e.target.classList.contains('log-btn')) return;
+            triggerPhoto(cat);
+          };
+        }
+        list.appendChild(item);
+      });
+
+      renderQuickLog();
+      updateGuideShortcutList();
+    }
+
+    // ── EDIT MODE ──
+    function toggleEdit() {
+      editMode = !editMode;
+      document.getElementById('editBtn').classList.toggle('active', editMode);
+      renderCats();
+    }
+
+    // ── DELETE ──
+    function deleteCat(id) {
+      const cat = cats.find(c => c.id === id);
+      if (!cat) return;
+      if (!confirm(`Delete "${cap(cat.name)}"? This won't affect your Shortcuts.`)) return;
+      cats = cats.filter(c => c.id !== id);
+      saveCats(cats);
+      renderCats();
+      showToast(`${cat.icon} ${cap(cat.name)} removed`, 'error');
+    }
+
+    // ── ADD MODAL ──
+    function buildIconGrid() {
+      const grid = document.getElementById('iconGrid');
+      grid.innerHTML = '';
+      ICON_OPTIONS.forEach(icon => {
+        const el = document.createElement('div');
+        el.className = 'icon-option';
+        el.textContent = icon;
+        el.onclick = () => selectIcon(icon);
+        grid.appendChild(el);
+      });
+    }
+
+    function selectIcon(icon) {
+      selectedIcon = icon;
+      document.querySelectorAll('.icon-option').forEach(el => {
+        el.classList.toggle('selected', el.textContent === icon);
+      });
+      validateModal();
+    }
+
+    function onNameInput() {
+      const val = document.getElementById('newCatName').value.trim();
+      if (val) selectIcon(suggestIcon(val));
+      validateModal();
+    }
+
+    function validateModal() {
+      const name = document.getElementById('newCatName').value.trim();
+      document.getElementById('modalConfirm').disabled = !name || !selectedIcon;
+    }
+
+    function openAddModal() {
+      document.getElementById('newCatName').value = '';
+      selectedIcon = null;
+      document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+      validateModal();
+      document.getElementById('addModal').classList.add('open');
+      setTimeout(() => document.getElementById('newCatName').focus(), 300);
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('open');
+    }
+
+    function confirmAdd() {
+      const rawName = document.getElementById('newCatName').value.trim();
+      if (!rawName || !selectedIcon) return;
+      const id = rawName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      if (cats.find(c => c.id === id)) {
+        showToast('Category already exists', 'error');
+        return;
+      }
+      const cat = { id, name: rawName, icon: selectedIcon, builtin: false };
+      cats.push(cat);
+      saveCats(cats);
+      closeAddModal();
+      renderCats();
+      showToast(`${selectedIcon} ${cap(rawName)} added!`, 'success');
+    }
+
+    // ── PHOTO FLOW ──
+    function triggerPhoto(cat) {
+      pendingCat = cat;
+      setLastCat(cat);
+      renderQuickLog();
+      document.getElementById('fileInput').value = '';
+      document.getElementById('fileInput').click();
+    }
+
+    function onPhotoChosen(event) {
+      const file = event.target.files[0];
+      if (!file || !pendingCat) return;
 
       if (pendingObjectURL) URL.revokeObjectURL(pendingObjectURL);
       pendingObjectURL = URL.createObjectURL(file);
 
-      const date = new Date().toISOString().split('T')[0];
-      const ts = Date.now();
-      const catId = pendingCategory.toLowerCase().replace(/\s+/g, '-');
-      pendingFilename = `${date}_${catId}_${ts}.jpg`;
+      const now = new Date();
+      const date = now.toISOString().slice(0, 10);
+      const ts = now.getTime();
+      const ext = file.name.split('.').pop() || 'jpg';
+      pendingFilename = `${date}_${pendingCat.id}_${ts}.${ext}`;
 
       document.getElementById('previewImg').src = pendingObjectURL;
-      document.getElementById('previewCategory').textContent = pendingCategory;
-      document.getElementById('previewOverlay').classList.add('show');
+      document.getElementById('previewCategory').textContent = `${pendingCat.icon} ${cap(pendingCat.name)}`;
+      document.getElementById('previewOverlay').classList.add('open');
     }
 
     function confirmLog() {
-      document.getElementById('previewOverlay').classList.remove('show');
-
-      document.getElementById('successLabel').textContent = pendingCategory + ' receipt logged';
-      document.getElementById('successOverlay').classList.add('show');
-
-      const name = encodeURIComponent('Receipt - ' + pendingCategory);
-      const input = encodeURIComponent(pendingFilename);
+      document.getElementById('previewOverlay').classList.remove('open');
+      const shortcutName = `Receipt - ${cap(pendingCat.name)}`;
+      const url = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}&input=${encodeURIComponent(pendingFilename)}`;
+      showToast(`Opening ${shortcutName}…`);
       setTimeout(() => {
-        window.location.href = `shortcuts://run-shortcut?name=${name}&input=text&text=${input}`;
-      }, 300);
+        window.location.href = url;
+        setTimeout(() => showToast(`✓ Sent to ${cap(pendingCat.name)}`, 'success'), 2500);
+      }, 200);
+      cleanup();
     }
 
     function cancelPreview() {
-      document.getElementById('previewOverlay').classList.remove('show');
-      if (pendingObjectURL) {
-        URL.revokeObjectURL(pendingObjectURL);
-        pendingObjectURL = null;
-      }
-      pendingCategory = null;
-      pendingFilename = null;
+      document.getElementById('previewOverlay').classList.remove('open');
+      cleanup();
     }
 
     function retake() {
-      document.getElementById('previewOverlay').classList.remove('show');
-      openCamera(pendingCategory);
+      document.getElementById('previewOverlay').classList.remove('open');
+      const cat = pendingCat;
+      cleanup();
+      triggerPhoto(cat);
     }
 
-    function dismissSuccess() {
-      document.getElementById('successOverlay').classList.remove('show');
+    function cleanup() {
       if (pendingObjectURL) {
         URL.revokeObjectURL(pendingObjectURL);
         pendingObjectURL = null;
       }
-      pendingCategory = null;
       pendingFilename = null;
     }
 
-    function saveCategory() {
-      const val = document.getElementById('customInput').value.trim();
-      if (!val) return;
-      const saved = getCategories();
-      if (!saved.includes(val)) {
-        saved.push(val);
-        localStorage.setItem('customCategories', JSON.stringify(saved));
-      }
-      document.getElementById('customInput').value = '';
-      renderCategories();
+    // ── GUIDE ──
+    function openGuide() {
+      updateGuideShortcutList();
+      document.getElementById('guideOverlay').classList.add('open');
     }
 
-    function deleteCategory(name) {
-      const saved = getCategories().filter(c => c !== name);
-      localStorage.setItem('customCategories', JSON.stringify(saved));
-      renderCategories();
+    function closeGuide() {
+      document.getElementById('guideOverlay').classList.remove('open');
     }
 
-    function getCategories() {
-      try { return JSON.parse(localStorage.getItem('customCategories')) || []; }
-      catch { return []; }
+    function updateGuideShortcutList() {
+      const container = document.getElementById('shortcutNameList');
+      if (!container) return;
+      container.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'cat-name-list';
+      cats.forEach(cat => {
+        const row = document.createElement('div');
+        row.className = 'cat-shortcut-row';
+        row.innerHTML = `
+          <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
+          <span class="cat-shortcut-label">shortcut name</span>
+        `;
+        wrap.appendChild(row);
+      });
+      container.appendChild(wrap);
     }
 
-    function renderCategories() {
-      const container = document.getElementById('savedCategories');
-      const saved = getCategories();
-      container.innerHTML = saved.map(name => `
-        <button class="btn saved" onclick="openCamera('${name.replace(/'/g, "\\'")}')">
-          <button class="btn-delete" onclick="event.stopPropagation(); deleteCategory('${name.replace(/'/g, "\\'")}')">×</button>
-          <span class="icon">🏷️</span>
-          ${name}
-        </button>
-      `).join('');
+    // ── TOAST ──
+    let toastTimer;
+    function showToast(msg, type = '') {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast' + (type ? ` ${type}` : '');
+      void el.offsetWidth;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
     }
 
-    document.getElementById('customInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') saveCategory();
+    // ── HELPERS ──
+    function cap(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1).replace(/-/g, ' ');
+    }
+
+    document.getElementById('addModal').addEventListener('click', function(e) {
+      if (e.target === this) closeAddModal();
     });
 
-    renderCategories();
+    document.getElementById('newCatName').addEventListener('keydown', e => {
+      if (e.key === 'Enter') confirmAdd();
+    });
+
+    init();
   </script>
 
 </body>
