@@ -770,16 +770,24 @@
       <div class="guide-step">
         <div class="step-num">3</div>
         <div class="step-content">
-          <div class="step-title">Save the photo to your Obsidian vault</div>
-          <div class="step-desc">Add a <strong>Save File</strong> action. Tap the path field and navigate to your Obsidian vault folder in Files:
-          </div>
+          <div class="step-title">Add a "Get Folder" action</div>
+          <div class="step-desc">Search for <strong>Get Folder</strong> and add it. This picker lets you select a folder (not a file). Navigate to your receipt folder:</div>
           <div class="step-code">On My iPhone → Obsidian → [Your Vault] → 03 AREAS → Finance → Receipts → [Category]</div>
-          <div class="step-desc" style="margin-top:8px;">The app passes the filename automatically — just make sure "Ask Where to Save" is turned off.</div>
+          <div class="step-desc" style="margin-top:8px;">Tap the folder to select it. This stores the folder as a variable for the next step.</div>
         </div>
       </div>
 
       <div class="guide-step">
         <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Add a "Save File" action</div>
+          <div class="step-desc">Add a <strong>Save File</strong> action after Get Folder. Tap the destination field and choose <strong>Get Folder Result</strong> from the variables menu — this uses the folder you just selected.</div>
+          <div class="step-desc" style="margin-top:8px;">Turn off <strong>Ask Where to Save</strong> in the action.</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">5</div>
         <div class="step-content">
           <div class="step-title">Name your Shortcut exactly</div>
           <div class="step-desc">The shortcut name must match exactly what this app sends. Create one shortcut per category using these names:</div>
@@ -788,7 +796,7 @@
       </div>
 
       <div class="guide-step">
-        <div class="step-num">5</div>
+        <div class="step-num">6</div>
         <div class="step-content">
           <div class="step-title">Turn on "Allow Running Without Asking"</div>
           <div class="step-desc">In the shortcut settings (tap the ⋯ menu), enable <strong>Allow Running Without Asking</strong> so it runs instantly when triggered from this app.</div>
@@ -796,7 +804,7 @@
       </div>
 
       <div class="guide-step">
-        <div class="step-num">6</div>
+        <div class="step-num">7</div>
         <div class="step-content">
           <div class="step-title">Test it!</div>
           <div class="step-desc">Tap a category, take a photo, confirm the preview, and tap <strong>Log It</strong>. The shortcut will fire and save the photo to your vault folder.</div>
