@@ -904,7 +904,11 @@
     function getCats() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        return saved && saved.length ? saved : [...DEFAULT_CATS];
+        if (!saved || !saved.length) return [...DEFAULT_CATS];
+        // Migration: ensure every category has a folder field
+        const migrated = saved.map(c => ({ folder: '', ...c }));
+        if (migrated.some((c, i) => !('folder' in saved[i]))) saveCats(migrated);
+        return migrated;
       } catch { return [...DEFAULT_CATS]; }
     }
 
