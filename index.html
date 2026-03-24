@@ -230,6 +230,17 @@
       margin-top: 1px;
     }
 
+    .cat-folder {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+
     .cat-action {
       display: flex;
       align-items: center;
@@ -317,6 +328,14 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-bottom: 8px;
+    }
+
+    .modal-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      margin-bottom: 4px;
+      line-height: 1.4;
     }
 
     .modal-input {
@@ -620,11 +639,13 @@
       font-size: 13px;
       font-family: 'DM Mono', monospace;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 4px;
     }
     .cat-shortcut-name { color: var(--accent); }
-    .cat-shortcut-label { color: var(--text-dim); font-size: 11px; }
+    .cat-shortcut-label { color: var(--text-dim); font-size: 11px; margin-left: 6px; }
+    .cat-shortcut-folder { font-size: 11px; color: var(--text-dim); }
+    .cat-shortcut-folder.no-folder { color: var(--text-muted); font-style: italic; }
 
     /* ── EMPTY STATE ── */
     .empty {
@@ -716,6 +737,10 @@
       <div class="modal-label">Name</div>
       <input class="modal-input" id="newCatName" type="text" placeholder="e.g. Travel, Coffee, Parking…"
         autocorrect="off" autocapitalize="words" oninput="onNameInput()">
+      <div class="modal-label" style="margin-top:16px;">Vault Folder <span style="color:var(--text-dim);font-weight:400;">(optional)</span></div>
+      <input class="modal-input" id="newCatFolder" type="text" placeholder="e.g. 03 AREAS/Finance/Receipts/Groceries"
+        autocorrect="off" autocapitalize="none" spellcheck="false">
+      <div class="modal-hint">The folder path inside your Obsidian vault. Used as a reference when setting up your Shortcut.</div>
       <div class="icon-picker-label">Icon</div>
       <div class="icon-grid" id="iconGrid"></div>
       <button class="modal-confirm" id="modalConfirm" onclick="confirmAdd()" disabled>Add Category</button>
@@ -771,8 +796,8 @@
         <div class="step-num">3</div>
         <div class="step-content">
           <div class="step-title">Add a "Get Folder" action</div>
-          <div class="step-desc">Search for <strong>Get Folder</strong> and add it. This picker lets you select a folder (not a file). Navigate to your receipt folder:</div>
-          <div class="step-code">On My iPhone → Obsidian → [Your Vault] → 03 AREAS → Finance → Receipts → [Category]</div>
+          <div class="step-desc">Search for <strong>Get Folder</strong> and add it. Navigate to the vault folder you set for this category (see the shortcut list above). If you haven't set one yet, close this guide, tap <strong>+</strong> to create or edit a category, and fill in the Vault Folder field.</div>
+          <div class="step-code">On My iPhone → Obsidian → [Your Vault] → [your folder path]</div>
           <div class="step-desc" style="margin-top:8px;">Tap the folder to select it. This stores the folder as a variable for the next step.</div>
         </div>
       </div>
@@ -830,10 +855,10 @@
     const LAST_KEY = 'receipt_last_cat';
 
     const DEFAULT_CATS = [
-      { id: 'groceries', name: 'Groceries', icon: '🛒', builtin: true },
-      { id: 'fuel',      name: 'Fuel',      icon: '⛽', builtin: true },
-      { id: 'bills',     name: 'Bills',     icon: '📄', builtin: true },
-      { id: 'misc',      name: 'Misc',      icon: '📦', builtin: true },
+      { id: 'groceries', name: 'Groceries', icon: '🛒', builtin: true, folder: '' },
+      { id: 'fuel',      name: 'Fuel',      icon: '⛽', builtin: true, folder: '' },
+      { id: 'bills',     name: 'Bills',     icon: '📄', builtin: true, folder: '' },
+      { id: 'misc',      name: 'Misc',      icon: '📦', builtin: true, folder: '' },
     ];
 
     const ICON_OPTIONS = [
@@ -953,6 +978,7 @@
           <div class="cat-info">
             <div class="cat-name">${cap(cat.name)}</div>
             <div class="cat-meta">Receipt - ${cap(cat.name)}</div>
+            ${cat.folder ? `<div class="cat-folder">📁 ${cat.folder}</div>` : ''}
           </div>
           <div class="cat-action">
             <button class="log-btn" onclick="triggerPhoto(cats[${i}])">Log Receipt</button>
@@ -1024,6 +1050,7 @@
 
     function openAddModal() {
       document.getElementById('newCatName').value = '';
+      document.getElementById('newCatFolder').value = '';
       selectedIcon = null;
       document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
       validateModal();
@@ -1043,7 +1070,8 @@
         showToast('Category already exists', 'error');
         return;
       }
-      const cat = { id, name: rawName, icon: selectedIcon, builtin: false };
+      const folder = document.getElementById('newCatFolder').value.trim();
+      const cat = { id, name: rawName, icon: selectedIcon, builtin: false, folder };
       cats.push(cat);
       saveCats(cats);
       closeAddModal();
@@ -1130,8 +1158,11 @@
         const row = document.createElement('div');
         row.className = 'cat-shortcut-row';
         row.innerHTML = `
-          <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
-          <span class="cat-shortcut-label">shortcut name</span>
+          <div>
+            <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
+            <span class="cat-shortcut-label">shortcut name</span>
+          </div>
+          ${cat.folder ? `<div class="cat-shortcut-folder">📁 ${cat.folder}</div>` : '<div class="cat-shortcut-folder no-folder">No folder set — tap + to add one</div>'}
         `;
         wrap.appendChild(row);
       });
