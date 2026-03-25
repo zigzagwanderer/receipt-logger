@@ -1016,19 +1016,37 @@
       const file = event.target.files[0];
       if (!file || !pendingCat) return;
 
-      pendingFile = file;
-      if (pendingObjectURL) URL.revokeObjectURL(pendingObjectURL);
-      pendingObjectURL = URL.createObjectURL(file);
-
       const now = new Date();
       const date = now.toISOString().slice(0, 10);
       const ts = now.getTime();
-      const ext = file.name.split('.').pop() || 'jpg';
-      pendingFilename = `${date}_${pendingCat.id}_${ts}.${ext}`;
+      pendingFilename = `${date}_${pendingCat.id}_${ts}.jpg`;
 
-      document.getElementById('previewImg').src = pendingObjectURL;
-      document.getElementById('previewCategory').textContent = `${pendingCat.icon} ${cap(pendingCat.name)}`;
-      document.getElementById('previewOverlay').classList.add('open');
+      const img = new Image();
+      const rawURL = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(rawURL);
+
+        const MAX = 1600;
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else       { w = Math.round(w * MAX / h); h = MAX; }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+        canvas.toBlob(blob => {
+          pendingFile = new File([blob], pendingFilename, { type: 'image/jpeg' });
+          if (pendingObjectURL) URL.revokeObjectURL(pendingObjectURL);
+          pendingObjectURL = URL.createObjectURL(pendingFile);
+          document.getElementById('previewImg').src = pendingObjectURL;
+          document.getElementById('previewCategory').textContent = `${pendingCat.icon} ${cap(pendingCat.name)}`;
+          document.getElementById('previewOverlay').classList.add('open');
+        }, 'image/jpeg', 0.82);
+      };
+      img.src = rawURL;
     }
 
     async function confirmLog() {
