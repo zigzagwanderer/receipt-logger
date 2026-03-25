@@ -1035,11 +1035,27 @@
       document.getElementById('previewOverlay').classList.remove('open');
       const file = new File([pendingFile], pendingFilename, { type: pendingFile.type });
       cleanup();
-      try {
-        await navigator.share({ files: [file] });
-      } catch (e) {
-        if (e.name !== 'AbortError') showToast('Could not open share sheet', 'error');
+
+      // Try Web Share API first (works in Safari browser)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file] });
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+          // Fall through to download fallback
+        }
       }
+
+      // Fallback: download link — triggers iOS save/share dialog
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
 
     function cancelPreview() {
