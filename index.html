@@ -233,17 +233,6 @@
       margin-top: 1px;
     }
 
-    .cat-folder {
-      font-size: 10px;
-      font-family: 'DM Mono', monospace;
-      color: var(--text-muted);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 160px;
-    }
-
     .cat-action {
       display: flex;
       align-items: center;
@@ -333,48 +322,7 @@
       margin-bottom: 8px;
     }
 
-    .modal-hint {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 6px;
-      margin-bottom: 4px;
-      line-height: 1.4;
-    }
-
-    /* ── FOLDER FIELD ── */
-    .folder-field {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--surface2);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      cursor: pointer;
-      margin-bottom: 0;
-      gap: 10px;
-    }
-    .folder-field:active { background: var(--surface); }
-
-    .folder-field-path {
-      font-size: 13px;
-      font-family: 'DM Mono', monospace;
-      color: var(--text-dim);
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .folder-field-path.set { color: var(--text); }
-
-    .folder-field-btn {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    /* ── FOLDER BUILDER SHEET ── */
+    /* ── SETUP SHEET ── */
     .sheet-overlay {
       display: none;
       position: fixed;
@@ -399,96 +347,29 @@
       height: 4px;
       background: var(--border-active);
       border-radius: 2px;
-      margin: 0 auto 16px;
+      margin: 0 auto 20px;
     }
+
+    .sheet-icon { font-size: 2.2rem; text-align: center; margin-bottom: 10px; }
 
     .sheet-title {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 16px;
+      text-align: center;
+      margin-bottom: 6px;
     }
 
-    .folder-breadcrumb {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 4px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      margin-bottom: 14px;
-      min-height: 42px;
-    }
-
-    .breadcrumb-root {
-      font-size: 12px;
-      font-family: 'DM Mono', monospace;
+    .sheet-subtitle {
+      font-size: 13px;
       color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 24px;
     }
-
-    .breadcrumb-sep {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .breadcrumb-seg {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--border);
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 12px;
-      font-family: 'DM Mono', monospace;
-      color: var(--text);
-    }
-
-    .breadcrumb-seg-remove {
-      color: var(--text-dim);
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 1;
-      padding: 0 2px;
-    }
-
-    .folder-segment-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .folder-segment-input {
-      flex: 1;
-      background: var(--surface2);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      outline: none;
-      -webkit-appearance: none;
-    }
-    .folder-segment-input:focus { border-color: var(--accent); }
-    .folder-segment-input::placeholder { color: var(--text-dim); }
-
-    .folder-add-btn {
-      background: var(--surface2);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 0 18px;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .folder-add-btn:active { background: var(--border); }
 
     .sheet-actions { display: flex; flex-direction: column; gap: 10px; }
 
-    .sheet-confirm {
+    .sheet-primary {
       background: var(--accent);
       border: none;
       border-radius: var(--radius-sm);
@@ -499,16 +380,30 @@
       cursor: pointer;
       font-family: inherit;
     }
-    .sheet-confirm:active { opacity: 0.85; }
+    .sheet-primary:active { opacity: 0.85; }
 
-    .sheet-cancel {
+    .sheet-secondary {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 15px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .sheet-secondary:active { background: var(--border); }
+
+    .sheet-skip {
       background: none;
       border: none;
       color: var(--text-dim);
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       font-family: inherit;
       padding: 8px;
+      text-align: center;
     }
 
     .modal-input {
@@ -812,13 +707,11 @@
       font-size: 13px;
       font-family: 'DM Mono', monospace;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      justify-content: space-between;
     }
     .cat-shortcut-name { color: var(--accent); }
     .cat-shortcut-label { color: var(--text-dim); font-size: 11px; margin-left: 6px; }
-    .cat-shortcut-folder { font-size: 11px; color: var(--text-dim); }
-    .cat-shortcut-folder.no-folder { color: var(--text-muted); font-style: italic; }
 
     /* ── EMPTY STATE ── */
     .empty {
@@ -910,13 +803,6 @@
       <div class="modal-label">Name</div>
       <input class="modal-input" id="newCatName" type="text" placeholder="e.g. Travel, Coffee, Parking…"
         autocorrect="off" autocapitalize="words" oninput="onNameInput()">
-      <div class="modal-label" style="margin-top:16px;">Destination Folder <span style="color:var(--text-dim);font-weight:400;">(optional)</span></div>
-      <div class="folder-field" onclick="openFolderBuilder()">
-        <span class="folder-field-path" id="folderFieldDisplay">Tap Browse to set a path…</span>
-        <span class="folder-field-btn">Browse</span>
-      </div>
-      <input type="hidden" id="newCatFolder">
-      <div class="modal-hint">The folder path inside your Obsidian vault. Used as a reference when setting up your Shortcut.</div>
       <div class="icon-picker-label">Icon</div>
       <div class="icon-grid" id="iconGrid"></div>
       <button class="modal-confirm" id="modalConfirm" onclick="confirmAdd()" disabled>Add Category</button>
@@ -924,23 +810,18 @@
     </div>
   </div>
 
-  <!-- FOLDER BUILDER -->
+  <!-- SETUP SHEET -->
 
-  <div class="sheet-overlay" id="folderSheet">
+  <div class="sheet-overlay" id="setupSheet">
     <div class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">Destination Folder</div>
-      <div class="folder-breadcrumb" id="folderBreadcrumb">
-        <span class="breadcrumb-root">Vault</span>
-      </div>
-      <div class="folder-segment-row">
-        <input class="folder-segment-input" id="folderSegmentInput" type="text"
-          placeholder="Type a folder name…" autocorrect="off" autocapitalize="none" spellcheck="false">
-        <button class="folder-add-btn" onclick="addFolderSegment()">Add</button>
-      </div>
+      <div class="sheet-icon" id="setupSheetIcon"></div>
+      <div class="sheet-title" id="setupSheetTitle"></div>
+      <div class="sheet-subtitle">You need one iOS Shortcut to save receipts for this category. It takes about a minute to set up.</div>
       <div class="sheet-actions">
-        <button class="sheet-confirm" onclick="confirmFolderBuilder()">Set Folder</button>
-        <button class="sheet-cancel" onclick="closeFolderBuilder()">Cancel</button>
+        <button class="sheet-primary" onclick="openShortcutsApp()">Open Shortcuts App</button>
+        <button class="sheet-secondary" onclick="openGuideForSetup()">View Setup Guide</button>
+        <button class="sheet-skip" onclick="closeSetupSheet()">I'll do this later</button>
       </div>
     </div>
   </div>
@@ -1045,10 +926,10 @@
     const LAST_KEY = 'receipt_last_cat';
 
     const DEFAULT_CATS = [
-      { id: 'groceries', name: 'Groceries', icon: '🛒', builtin: true, folder: '' },
-      { id: 'fuel',      name: 'Fuel',      icon: '⛽', builtin: true, folder: '' },
-      { id: 'bills',     name: 'Bills',     icon: '📄', builtin: true, folder: '' },
-      { id: 'misc',      name: 'Misc',      icon: '📦', builtin: true, folder: '' },
+      { id: 'groceries', name: 'Groceries', icon: '🛒', builtin: true },
+      { id: 'fuel',      name: 'Fuel',      icon: '⛽', builtin: true },
+      { id: 'bills',     name: 'Bills',     icon: '📄', builtin: true },
+      { id: 'misc',      name: 'Misc',      icon: '📦', builtin: true },
     ];
 
     const ICON_OPTIONS = [
@@ -1095,10 +976,7 @@
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!saved || !saved.length) return [...DEFAULT_CATS];
-        // Migration: ensure every category has a folder field
-        const migrated = saved.map(c => ({ folder: '', ...c }));
-        if (migrated.some((c, i) => !('folder' in saved[i]))) saveCats(migrated);
-        return migrated;
+        return saved;
       } catch { return [...DEFAULT_CATS]; }
     }
 
@@ -1172,7 +1050,6 @@
           <div class="cat-info">
             <div class="cat-name">${cap(cat.name)}</div>
             <div class="cat-meta">Receipt - ${cap(cat.name)}</div>
-            ${cat.folder ? `<div class="cat-folder">📁 ${cat.folder}</div>` : ''}
           </div>
           <div class="cat-action">
             <button class="log-btn" onclick="triggerPhoto(cats[${i}])">Log Receipt</button>
@@ -1244,9 +1121,6 @@
 
     function openAddModal() {
       document.getElementById('newCatName').value = '';
-      document.getElementById('newCatFolder').value = '';
-      folderSegments = [];
-      updateFolderField();
       selectedIcon = null;
       document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
       validateModal();
@@ -1254,64 +1128,25 @@
       setTimeout(() => document.getElementById('newCatName').focus(), 300);
     }
 
-    // ── FOLDER BUILDER ──
-    let folderSegments = [];
-
-    function openFolderBuilder() {
-      // Seed from existing value if any
-      const existing = document.getElementById('newCatFolder').value;
-      folderSegments = existing ? existing.split('/').filter(Boolean) : [];
-      renderBreadcrumb();
-      document.getElementById('folderSegmentInput').value = '';
-      document.getElementById('folderSheet').classList.add('open');
-      setTimeout(() => document.getElementById('folderSegmentInput').focus(), 300);
+    // ── SETUP SHEET ──
+    function openSetupSheet(cat) {
+      document.getElementById('setupSheetIcon').textContent = cat.icon;
+      document.getElementById('setupSheetTitle').textContent = `Set up "${cap(cat.name)}" Shortcut`;
+      document.getElementById('setupSheet').classList.add('open');
     }
 
-    function closeFolderBuilder() {
-      document.getElementById('folderSheet').classList.remove('open');
+    function closeSetupSheet() {
+      document.getElementById('setupSheet').classList.remove('open');
     }
 
-    function confirmFolderBuilder() {
-      const path = folderSegments.join('/');
-      document.getElementById('newCatFolder').value = path;
-      updateFolderField();
-      closeFolderBuilder();
+    function openShortcutsApp() {
+      closeSetupSheet();
+      window.location.href = 'shortcuts://';
     }
 
-    function addFolderSegment() {
-      const input = document.getElementById('folderSegmentInput');
-      const val = input.value.trim();
-      if (!val) return;
-      folderSegments.push(val);
-      input.value = '';
-      renderBreadcrumb();
-      input.focus();
-    }
-
-    function removeFolderSegment(i) {
-      folderSegments.splice(i, 1);
-      renderBreadcrumb();
-    }
-
-    function renderBreadcrumb() {
-      const bc = document.getElementById('folderBreadcrumb');
-      bc.innerHTML = '<span class="breadcrumb-root">Vault</span>';
-      folderSegments.forEach((seg, i) => {
-        bc.innerHTML += '<span class="breadcrumb-sep">/</span>';
-        bc.innerHTML += `<span class="breadcrumb-seg">${seg}<span class="breadcrumb-seg-remove" onclick="removeFolderSegment(${i})">×</span></span>`;
-      });
-    }
-
-    function updateFolderField() {
-      const path = document.getElementById('newCatFolder').value;
-      const display = document.getElementById('folderFieldDisplay');
-      if (path) {
-        display.textContent = path;
-        display.classList.add('set');
-      } else {
-        display.textContent = 'Tap Browse to set a path…';
-        display.classList.remove('set');
-      }
+    function openGuideForSetup() {
+      closeSetupSheet();
+      openGuide();
     }
 
     function closeAddModal() {
@@ -1326,13 +1161,12 @@
         showToast('Category already exists', 'error');
         return;
       }
-      const folder = document.getElementById('newCatFolder').value.trim();
-      const cat = { id, name: rawName, icon: selectedIcon, builtin: false, folder };
+      const cat = { id, name: rawName, icon: selectedIcon, builtin: false };
       cats.push(cat);
       saveCats(cats);
       closeAddModal();
       renderCats();
-      showToast(`${selectedIcon} ${cap(rawName)} added!`, 'success');
+      setTimeout(() => openSetupSheet(cat), 300);
     }
 
     // ── PHOTO FLOW ──
@@ -1414,11 +1248,8 @@
         const row = document.createElement('div');
         row.className = 'cat-shortcut-row';
         row.innerHTML = `
-          <div>
-            <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
-            <span class="cat-shortcut-label">shortcut name</span>
-          </div>
-          ${cat.folder ? `<div class="cat-shortcut-folder">📁 ${cat.folder}</div>` : '<div class="cat-shortcut-folder no-folder">No folder set — tap + to add one</div>'}
+          <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
+          <span class="cat-shortcut-label">shortcut name</span>
         `;
         wrap.appendChild(row);
       });
@@ -1447,16 +1278,12 @@
       if (e.target === this) closeAddModal();
     });
 
-    document.getElementById('folderSheet').addEventListener('click', function(e) {
-      if (e.target === this) closeFolderBuilder();
+    document.getElementById('setupSheet').addEventListener('click', function(e) {
+      if (e.target === this) closeSetupSheet();
     });
 
     document.getElementById('newCatName').addEventListener('keydown', e => {
       if (e.key === 'Enter') confirmAdd();
-    });
-
-    document.getElementById('folderSegmentInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') addFolderSegment();
     });
 
     init();
