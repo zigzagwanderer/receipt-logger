@@ -322,89 +322,6 @@
       margin-bottom: 8px;
     }
 
-    /* ── SETUP SHEET ── */
-    .sheet-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 300;
-      align-items: flex-end;
-    }
-    .sheet-overlay.open { display: flex; }
-
-    .sheet {
-      background: var(--surface);
-      border-radius: 20px 20px 0 0;
-      padding: 12px 20px 40px;
-      width: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-    }
-
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border-active);
-      border-radius: 2px;
-      margin: 0 auto 20px;
-    }
-
-    .sheet-icon { font-size: 2.2rem; text-align: center; margin-bottom: 10px; }
-
-    .sheet-title {
-      font-size: 18px;
-      font-weight: 600;
-      text-align: center;
-      margin-bottom: 6px;
-    }
-
-    .sheet-subtitle {
-      font-size: 13px;
-      color: var(--text-dim);
-      text-align: center;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .sheet-actions { display: flex; flex-direction: column; gap: 10px; }
-
-    .sheet-primary {
-      background: var(--accent);
-      border: none;
-      border-radius: var(--radius-sm);
-      color: var(--accent-text);
-      font-size: 15px;
-      font-weight: 700;
-      padding: 16px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .sheet-primary:active { opacity: 0.85; }
-
-    .sheet-secondary {
-      background: var(--surface2);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 500;
-      padding: 15px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .sheet-secondary:active { background: var(--border); }
-
-    .sheet-skip {
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      font-size: 13px;
-      cursor: pointer;
-      font-family: inherit;
-      padding: 8px;
-      text-align: center;
-    }
 
     .modal-input {
       width: 100%;
@@ -693,25 +610,6 @@
     }
     .guide-note strong { color: var(--accent); }
 
-    .cat-name-list {
-      padding: 10px 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .cat-shortcut-row {
-      background: var(--surface2);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-family: 'DM Mono', monospace;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cat-shortcut-name { color: var(--accent); }
-    .cat-shortcut-label { color: var(--text-dim); font-size: 11px; margin-left: 6px; }
 
     /* ── EMPTY STATE ── */
     .empty {
@@ -810,22 +708,6 @@
     </div>
   </div>
 
-  <!-- SETUP SHEET -->
-
-  <div class="sheet-overlay" id="setupSheet">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-icon" id="setupSheetIcon"></div>
-      <div class="sheet-title" id="setupSheetTitle"></div>
-      <div class="sheet-subtitle">You need one iOS Shortcut to save receipts for this category. It takes about a minute to set up.</div>
-      <div class="sheet-actions">
-        <button class="sheet-primary" onclick="openShortcutsApp()">Open Shortcuts App</button>
-        <button class="sheet-secondary" onclick="openGuideForSetup()">View Setup Guide</button>
-        <button class="sheet-skip" onclick="closeSetupSheet()">I'll do this later</button>
-      </div>
-    </div>
-  </div>
-
   <!-- PHOTO PREVIEW -->
 
   <div class="preview-overlay" id="previewOverlay">
@@ -849,68 +731,40 @@
       <div style="font-size:18px; font-weight:600;">Setup Guide</div>
       <div class="guide-close" onclick="closeGuide()">Done</div>
     </div>
-    <div class="guide-title">Connect to Shortcuts</div>
-    <div class="guide-subtitle">Each category needs one iOS Shortcut to receive the photo and save it to your vault. Set this up once per category — after that, logging is just a few taps.</div>
+    <div class="guide-title">How it works</div>
+    <div class="guide-subtitle">No setup needed. Tap a category, take a photo, and save it wherever you like.</div>
 
     <div class="guide-steps">
 
       <div class="guide-step">
         <div class="step-num">1</div>
         <div class="step-content">
-          <div class="step-title">Create a new Shortcut</div>
-          <div class="step-desc">Open the <strong>Shortcuts</strong> app on your iPhone. Tap <strong>+</strong> in the top-right corner to create a new shortcut.</div>
+          <div class="step-title">Tap a category</div>
+          <div class="step-desc">Tap any category — or use <strong>Quick Log</strong> at the top to repeat the last one. Your camera opens immediately.</div>
         </div>
       </div>
 
       <div class="guide-step">
         <div class="step-num">2</div>
         <div class="step-content">
-          <div class="step-title">Add "Get Latest Photos"</div>
-          <div class="step-desc">Tap <strong>Add Action</strong>, search for <strong>Get Latest Photos</strong>, and add it. Tap the action to expand it and set the count to <strong>1</strong>. This grabs the photo you just took.</div>
+          <div class="step-title">Take or choose a photo</div>
+          <div class="step-desc">Take a new photo or pick one from your library. A preview appears so you can confirm, retake, or cancel before saving.</div>
         </div>
       </div>
 
       <div class="guide-step">
         <div class="step-num">3</div>
         <div class="step-content">
-          <div class="step-title">Add "Set Name"</div>
-          <div class="step-desc">Tap <strong>+</strong>, search for <strong>Set Name</strong>, and add it. Tap the <strong>Name</strong> field, then tap <strong>Insert Variable</strong> and choose <strong>Shortcut Input</strong>. This applies the filename sent by this app to the photo.</div>
-        </div>
-      </div>
-
-      <div class="guide-step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <div class="step-title">Add "Save File"</div>
-          <div class="step-desc">Tap <strong>+</strong>, search for <strong>Save File</strong>, and add it. Tap the destination field to open the folder browser — navigate to your vault folder for this category:</div>
-          <div class="step-code">On My iPhone → Obsidian → [Your Vault] → [destination folder]</div>
-          <div class="step-desc" style="margin-top:8px;">Turn off <strong>Ask Where to Save</strong> so it saves silently every time.</div>
-          <div class="step-desc" style="margin-top:6px;">Your destination folders are listed in the shortcut table above.</div>
-        </div>
-      </div>
-
-      <div class="guide-step">
-        <div class="step-num">5</div>
-        <div class="step-content">
-          <div class="step-title">Name your Shortcut exactly</div>
-          <div class="step-desc">Tap the shortcut name at the top to rename it. The name must match <em>exactly</em> — including capitalisation. One shortcut per category:</div>
-          <div id="shortcutNameList"></div>
-        </div>
-      </div>
-
-      <div class="guide-step">
-        <div class="step-num">6</div>
-        <div class="step-content">
-          <div class="step-title">Test it!</div>
-          <div class="step-desc">Tap a category in this app, take a photo, confirm the preview, and tap <strong>Log It</strong>. The shortcut will run and save the photo to your vault folder.</div>
-          <div class="step-desc" style="margin-top:6px;">The first time it runs, iOS may ask for <strong>Photos access</strong> — tap <strong>Allow</strong>.</div>
+          <div class="step-title">Tap Log It → Save to Files</div>
+          <div class="step-desc">The iOS share sheet opens with the photo already named <em>date_category_timestamp</em>. Tap <strong>Save to Files</strong>, navigate to your Obsidian vault folder, and tap <strong>Save</strong>.</div>
+          <div class="step-desc" style="margin-top:8px;">iOS remembers your last save location, so after the first time it's just two taps.</div>
         </div>
       </div>
 
     </div>
 
     <div class="guide-note">
-      <strong>Note:</strong> iOS does not allow apps to create Shortcuts automatically. You only need to do this setup once per category — after that, logging is just a few taps.
+      <strong>Tip:</strong> Create a category for each folder you save receipts to — Groceries, Fuel, Bills, or whatever works for you.
     </div>
   </div>
 
@@ -997,6 +851,7 @@
     let cats = getCats();
     let editMode = false;
     let pendingCat = null;
+    let pendingFile = null;
     let pendingFilename = null;
     let pendingObjectURL = null;
     let selectedIcon = null;
@@ -1066,7 +921,6 @@
       });
 
       renderQuickLog();
-      updateGuideShortcutList();
     }
 
     // ── EDIT MODE ──
@@ -1128,26 +982,6 @@
       setTimeout(() => document.getElementById('newCatName').focus(), 300);
     }
 
-    // ── SETUP SHEET ──
-    function openSetupSheet(cat) {
-      document.getElementById('setupSheetIcon').textContent = cat.icon;
-      document.getElementById('setupSheetTitle').textContent = `Set up "${cap(cat.name)}" Shortcut`;
-      document.getElementById('setupSheet').classList.add('open');
-    }
-
-    function closeSetupSheet() {
-      document.getElementById('setupSheet').classList.remove('open');
-    }
-
-    function openShortcutsApp() {
-      closeSetupSheet();
-      window.location.href = 'shortcuts://';
-    }
-
-    function openGuideForSetup() {
-      closeSetupSheet();
-      openGuide();
-    }
 
     function closeAddModal() {
       document.getElementById('addModal').classList.remove('open');
@@ -1166,7 +1000,7 @@
       saveCats(cats);
       closeAddModal();
       renderCats();
-      setTimeout(() => openSetupSheet(cat), 300);
+      showToast(`${selectedIcon} ${cap(rawName)} added!`, 'success');
     }
 
     // ── PHOTO FLOW ──
@@ -1182,6 +1016,7 @@
       const file = event.target.files[0];
       if (!file || !pendingCat) return;
 
+      pendingFile = file;
       if (pendingObjectURL) URL.revokeObjectURL(pendingObjectURL);
       pendingObjectURL = URL.createObjectURL(file);
 
@@ -1196,16 +1031,15 @@
       document.getElementById('previewOverlay').classList.add('open');
     }
 
-    function confirmLog() {
+    async function confirmLog() {
       document.getElementById('previewOverlay').classList.remove('open');
-      const shortcutName = `Receipt - ${cap(pendingCat.name)}`;
-      const url = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}&input=text&text=${encodeURIComponent(pendingFilename)}`;
-      showToast(`Opening ${shortcutName}…`);
-      setTimeout(() => {
-        window.location.href = url;
-        setTimeout(() => showToast(`✓ Sent to ${cap(pendingCat.name)}`, 'success'), 2500);
-      }, 200);
+      const file = new File([pendingFile], pendingFilename, { type: pendingFile.type });
       cleanup();
+      try {
+        await navigator.share({ files: [file] });
+      } catch (e) {
+        if (e.name !== 'AbortError') showToast('Could not open share sheet', 'error');
+      }
     }
 
     function cancelPreview() {
@@ -1225,35 +1059,17 @@
         URL.revokeObjectURL(pendingObjectURL);
         pendingObjectURL = null;
       }
+      pendingFile = null;
       pendingFilename = null;
     }
 
     // ── GUIDE ──
     function openGuide() {
-      updateGuideShortcutList();
       document.getElementById('guideOverlay').classList.add('open');
     }
 
     function closeGuide() {
       document.getElementById('guideOverlay').classList.remove('open');
-    }
-
-    function updateGuideShortcutList() {
-      const container = document.getElementById('shortcutNameList');
-      if (!container) return;
-      container.innerHTML = '';
-      const wrap = document.createElement('div');
-      wrap.className = 'cat-name-list';
-      cats.forEach(cat => {
-        const row = document.createElement('div');
-        row.className = 'cat-shortcut-row';
-        row.innerHTML = `
-          <span class="cat-shortcut-name">${cat.icon} Receipt - ${cap(cat.name)}</span>
-          <span class="cat-shortcut-label">shortcut name</span>
-        `;
-        wrap.appendChild(row);
-      });
-      container.appendChild(wrap);
     }
 
     // ── TOAST ──
@@ -1276,10 +1092,6 @@
 
     document.getElementById('addModal').addEventListener('click', function(e) {
       if (e.target === this) closeAddModal();
-    });
-
-    document.getElementById('setupSheet').addEventListener('click', function(e) {
-      if (e.target === this) closeSetupSheet();
     });
 
     document.getElementById('newCatName').addEventListener('keydown', e => {
